@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.arrg.android.app.ugallery.view.activity.SearchActivity">
+
+    <com.zhy.autolayout.AutoFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize">
+
+        <com.zhy.autolayout.AutoLinearLayout
+            android:id="@+id/searchContainer"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/md_screen_edge_margin_horizontal_mobile"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_arrow_back_black_24dp" />
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/searchView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ellipsize="start"
+                android:hint="@string/search"
+                android:inputType="text"
+                android:labelFor="@id/searchView"
+                android:maxLines="1" />
+
+            <ImageButton
+                android:id="@+id/btnSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/md_screen_edge_margin_horizontal_mobile"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_keyboard_voice_black_24dp" />
+        </com.zhy.autolayout.AutoLinearLayout>
+
+        <include layout="@layout/toolbar_layout" />
+    </com.zhy.autolayout.AutoFrameLayout>
+
+    <com.afollestad.dragselectrecyclerview.DragSelectRecyclerView
+        android:id="@+id/searchMedia"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:dsrv_autoScrollEnabled="true"
+        app:dsrv_autoScrollHotspotHeight="25dp" />
+
+    <include layout="@layout/view_empty" />
+
+    <include layout="@layout/view_loading" />
+
+    <include layout="@layout/view_error" />
+</com.zhy.autolayout.AutoLinearLayout>
