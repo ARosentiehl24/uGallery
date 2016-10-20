@@ -13,7 +13,6 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -39,8 +38,7 @@ import butterknife.OnClick;
 
 import static com.thefinestartist.Base.getContext;
 
-public class SearchActivity extends AppCompatActivity implements SearchView {
-
+public class SearchActivity extends AppCompatActivity implements MediaSearchAdapter.OnItemClickListener, SearchView {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -56,8 +54,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     TextView tvTitle;
     @BindView(R.id.btnBackActionMode)
     ImageButton btnBackActionMode;
-    @BindView(R.id.tvItemCount)
-    TextView tvItemCount;
+    @BindView(R.id.tvTitleActionMode)
+    TextView tvTitleActionMode;
     @BindView(R.id.searchContainer)
     AutoLinearLayout searchContainer;
     @BindView(R.id.actionModeContainer)
@@ -88,6 +86,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     public void onBackPressed() {
         if (toolbar.getVisibility() == View.VISIBLE) {
             unSelectAll();
+            toggleActionMode();
         } else {
             Navigator.with(this).utils().finishWithAnimation();
         }
@@ -148,35 +147,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mediaSearchAdapter = iSearchPresenter.makeQuery(s, phoneAlbumArrayList);
-                mediaSearchAdapter.setOnItemClickListener(new MediaSearchAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(MediaSearchAdapter.ViewHolder viewHolder, View itemView, int position) {
-                        if (onLongClickPressed) {
-                            CheckBox checkBox = (CheckBox) itemView.findViewById(R.id.cbIsSelected);
-                            checkBox.setChecked(!checkBox.isChecked());
-
-                            mediaSearchAdapter.setChecked(position, checkBox.isChecked());
-                        } else {
-                            //showMessage("Open Album");
-                        }
-                    }
-
-                    @Override
-                    public void onLongItemClick(MediaSearchAdapter.ViewHolder viewHolder, View itemView, int position) {
-                        if (onLongClickPressed) {
-                            unSelectAll();
-                        } else {
-                            CheckBox checkBox = (CheckBox) itemView.findViewById(R.id.cbIsSelected);
-                            checkBox.setChecked(!checkBox.isChecked());
-
-                            mediaSearchAdapter.setChecked(position, checkBox.isChecked());
-
-                            selectAll();
-                        }
-
-                        toggleActionMode();
-                    }
-                });
+                mediaSearchAdapter.setOnItemClickListener(SearchActivity.this);
 
                 searchMedia.setAdapter(mediaSearchAdapter);
                 searchMedia.setHasFixedSize(true);
@@ -214,9 +185,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         toolbar.getMenu().clear();
         toolbar.inflateMenu(R.menu.menu_gallery_action_mode);
 
-        //actionModeContainer.setVisibility(View.VISIBLE);
-        //searchContainer.setVisibility(View.INVISIBLE);
-        //tvTitle.setVisibility(View.INVISIBLE);
+        toolbar.setVisibility(View.VISIBLE);
+
+        actionModeContainer.setVisibility(View.VISIBLE);
+        tvTitle.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -224,12 +196,23 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         toolbar.getMenu().clear();
         toolbar.inflateMenu(R.menu.menu_gallery);
 
-        //actionModeContainer.setVisibility(View.INVISIBLE);
-        //searchContainer.setVisibility(View.VISIBLE);
-        //tvTitle.setVisibility(View.VISIBLE);
+        toolbar.setVisibility(View.INVISIBLE);
+
+        actionModeContainer.setVisibility(View.INVISIBLE);
+        tvTitle.setVisibility(View.VISIBLE);
     }
 
-    private void selectAll() {
+    @Override
+    public void toggleSelection() {
+        if (onLongClickPressed) {
+            unSelectAll();
+        } else {
+            selectAll();
+        }
+    }
+
+    @Override
+    public void selectAll() {
         onLongClickPressed = true;
 
         for (int i = 0; i < mediaSearchAdapter.getItemCount(); i++) {
@@ -237,9 +220,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         }
 
         mediaSearchAdapter.notifyDataSetChanged();
+
+        onClickPressed(mediaSearchAdapter.getSelectedItems());
+        onLongClickPressed(onLongClickPressed);
     }
 
-    private void unSelectAll() {
+    @Override
+    public void unSelectAll() {
         onLongClickPressed = false;
 
         mediaSearchAdapter.clearSelected();
@@ -249,6 +236,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         }
 
         mediaSearchAdapter.notifyDataSetChanged();
+
+        onClickPressed(mediaSearchAdapter.getSelectedItems());
+        onLongClickPressed(onLongClickPressed);
     }
 
     @OnClick({R.id.btnBack, R.id.btnSearch})
@@ -272,6 +262,55 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @OnClick(R.id.btnBackActionMode)
     public void onClick() {
-        hideActionMode();
+        onBackPressed();
+    }
+
+    @Override
+    public void onItemClick(MediaSearchAdapter.ViewHolder viewHolder, View itemView, int position) {
+        if (onLongClickPressed) {
+            mediaSearchAdapter.toggleSelected(position);
+
+            onClickPressed(mediaSearchAdapter.getSelectedItems());
+        } else {
+            //showMessage("Open Album");
+        }
+    }
+
+    private void onClickPressed(int selectedItems) {
+        if (selectedItems == 0) {
+            tvTitleActionMode.setText(getString(R.string.select_item_title));
+        } else {
+            tvTitleActionMode.setText(String.valueOf(selectedItems));
+        }
+    }
+
+    @Override
+    public void onLongItemClick(MediaSearchAdapter.ViewHolder viewHolder, View itemView, int position) {
+        if (onLongClickPressed) {
+            unSelectAll();
+        } else {
+            select(position);
+        }
+
+        onLongClickPressed(onLongClickPressed);
+    }
+
+    private void select(int position) {
+        onLongClickPressed = true;
+
+        mediaSearchAdapter.clearSelected();
+
+        mediaSearchAdapter.setSelected(position, true);
+
+        mediaSearchAdapter.notifyDataSetChanged();
+
+        onClickPressed(mediaSearchAdapter.getSelectedItems());
+        onLongClickPressed(onLongClickPressed);
+    }
+
+    private void onLongClickPressed(Boolean onLongClickPressed) {
+        this.onLongClickPressed = onLongClickPressed;
+
+        toggleActionMode();
     }
 }

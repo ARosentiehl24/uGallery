@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.afollestad.dragselectrecyclerview.DragSelectRecyclerView;
+import com.afollestad.dragselectrecyclerview.DragSelectRecyclerViewAdapter;
 import com.arrg.android.app.ugallery.R;
 import com.arrg.android.app.ugallery.UGallery;
 import com.arrg.android.app.ugallery.interfaces.GalleryFragmentView;
@@ -37,10 +38,10 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GalleryFragment extends Fragment implements GalleryAdapter.OnItemClickListener, GalleryFragmentView {
+public class GalleryFragment extends Fragment implements DragSelectRecyclerViewAdapter.SelectionListener, GalleryAdapter.OnItemClickListener, GalleryFragmentView {
 
     public interface GalleryFragmentListener {
-        void onClickPressed(int itemsSelected);
+        void onClickPressed(int selectedItems);
         void onLongClickPressed(boolean onLongClickPressed);
     }
 
@@ -197,6 +198,11 @@ public class GalleryFragment extends Fragment implements GalleryAdapter.OnItemCl
 
         galleryFragmentListener.onClickPressed(galleryAdapter.getSelectedItems());
         galleryFragmentListener.onLongClickPressed(isLongClickPressed);
+    }
+
+    @Override
+    public void onDragSelectionChanged(int count) {
+
     }
 
     @Override

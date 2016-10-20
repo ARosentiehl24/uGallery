@@ -13,6 +13,7 @@ import com.afollestad.dragselectrecyclerview.DragSelectRecyclerViewAdapter;
 import com.arrg.android.app.ugallery.R;
 import com.arrg.android.app.ugallery.model.entity.PhoneMedia;
 import com.bumptech.glide.Glide;
+import com.zhy.autolayout.AutoLinearLayout;
 
 import java.util.ArrayList;
 
@@ -51,13 +52,12 @@ public class MediaSearchAdapter extends DragSelectRecyclerViewAdapter<MediaSearc
 
         PhoneMedia phoneMedia = mediaArrayList.get(position);
 
-        Glide.with(context).load(phoneMedia.getMediaPath()).crossFade().into(holder.ivMedia);
+        Glide.with(context).load(phoneMedia.getMediaPath()).dontAnimate().into(holder.ivMedia);
         holder.tvTitle.setText(phoneMedia.getTitle());
         holder.tvPath.setText(phoneMedia.getMediaPath());
 
-        holder.cbIsSelected.setVisibility(isIndexSelected(position) ? View.VISIBLE : View.INVISIBLE);
-        holder.cbIsSelected.setChecked(phoneMedia.getChecked());
         holder.ivPlay.setVisibility(phoneMedia.getMediaPath().matches(MTV_REG) ? View.VISIBLE : View.INVISIBLE);
+        holder.container.setBackgroundResource(isIndexSelected(position) ?  R.color.alphaColorAccent : android.R.color.transparent);
     }
 
     @Override
@@ -74,15 +74,15 @@ public class MediaSearchAdapter extends DragSelectRecyclerViewAdapter<MediaSearc
     }
 
     public int getSelectedItems() {
-        int i = 0;
+        int selectedItems = 0;
 
-        for (PhoneMedia media : mediaArrayList) {
-            if (media.getChecked()) {
-                i++;
+        for (int i = 0; i < getItemCount(); i++) {
+            if (isIndexSelected(i)) {
+                selectedItems++;
             }
         }
 
-        return i;
+        return selectedItems;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -92,6 +92,9 @@ public class MediaSearchAdapter extends DragSelectRecyclerViewAdapter<MediaSearc
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private OnItemClickListener onItemClickListener;
+
+        @BindView(R.id.container)
+        AutoLinearLayout container;
 
         @BindView(R.id.ivTitle)
         ImageView ivMedia;

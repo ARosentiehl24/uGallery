@@ -8,4 +8,10 @@ public interface SearchView {
     void showActionMode();
 
     void hideActionMode();
+
+    void toggleSelection();
+
+    void selectAll();
+
+    void unSelectAll();
 }

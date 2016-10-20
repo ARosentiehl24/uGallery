@@ -41,11 +41,11 @@
                     android:src="@drawable/ic_arrow_back_black_24dp" />
 
                 <TextView
-                    android:id="@+id/tvTitleActionMode"
+                    android:id="@+id/tvItemCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|start"
-                    android:layout_marginStart="@dimen/md_screen_edge_margin_horizontal_mobile"
+                    android:layout_margin="@dimen/md_screen_edge_margin_horizontal_mobile"
                     android:gravity="center|start"
                     android:text="@string/app_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title" />

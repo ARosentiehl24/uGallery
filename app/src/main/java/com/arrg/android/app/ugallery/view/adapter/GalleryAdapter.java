@@ -1,7 +1,6 @@
 package com.arrg.android.app.ugallery.view.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,7 @@ import com.afollestad.dragselectrecyclerview.DragSelectRecyclerViewAdapter;
 import com.arrg.android.app.ugallery.R;
 import com.arrg.android.app.ugallery.model.entity.PhoneAlbum;
 import com.bumptech.glide.Glide;
-import com.thefinestartist.utils.content.Res;
-import com.thefinestartist.utils.ui.DisplayUtil;
+import com.zhy.autolayout.AutoRelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -45,20 +43,19 @@ public class GalleryAdapter extends DragSelectRecyclerViewAdapter<GalleryAdapter
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
         PhoneAlbum phoneAlbum = albumArrayList.get(position);
 
         Glide.with(context).load(phoneAlbum.getCoverMedia()).crossFade().into(holder.ivCover);
 
-        holder.cardContainer.setLayoutParams(new CardView.LayoutParams(DisplayUtil.getWidth() / Res.getInteger(R.integer.grid_count_gallery), Math.round((DisplayUtil.getWidth() / Res.getInteger(R.integer.grid_count_gallery)) * 1.5f)));
+        //holder.container.setLayoutParams(new CardView.LayoutParams(DisplayUtil.getWidth() / Res.getInteger(R.integer.grid_count_gallery), Math.round((DisplayUtil.getWidth() / Res.getInteger(R.integer.grid_count_gallery)) * 1.5f)));
         holder.tvAlbumName.setText(phoneAlbum.getAlbumName());
         holder.tvNumberOfFiles.setText(String.format(Locale.US, "(%d)", phoneAlbum.getPhoneMedias().size()));
 
         holder.cbIsSelected.setVisibility(isIndexSelected(position) ? View.VISIBLE : View.INVISIBLE);
         holder.cbIsSelected.setChecked(phoneAlbum.getSelected());
-        holder.ivPlay.setVisibility(phoneAlbum.getCoverMedia().matches(MTV_REG) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -103,16 +100,14 @@ public class GalleryAdapter extends DragSelectRecyclerViewAdapter<GalleryAdapter
 
         @BindView(R.id.ivCover)
         ImageView ivCover;
-        @BindView(R.id.ivPlay)
-        ImageView ivPlay;
         @BindView(R.id.tvAlbumName)
         TextView tvAlbumName;
         @BindView(R.id.tvNumberOfFiles)
         TextView tvNumberOfFiles;
         @BindView(R.id.cbIsSelected)
         CheckBox cbIsSelected;
-        @BindView(R.id.cardContainer)
-        CardView cardContainer;
+        @BindView(R.id.container)
+        AutoRelativeLayout container;
 
         private OnItemClickListener onItemClickListener;
 

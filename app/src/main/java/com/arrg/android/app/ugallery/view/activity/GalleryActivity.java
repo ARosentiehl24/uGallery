@@ -43,8 +43,8 @@ public class GalleryActivity extends AppCompatActivity implements BottomSheetLis
 
     @BindView(R.id.btnBackActionMode)
     ImageButton btnBackActionMode;
-    @BindView(R.id.tvItemCount)
-    TextView tvItemCount;
+    @BindView(R.id.tvTitleActionMode)
+    TextView tvTitleActionMode;
     @BindView(R.id.actionModeContainer)
     AutoLinearLayout actionModeContainer;
     @BindView(R.id.toolbar)
@@ -54,7 +54,7 @@ public class GalleryActivity extends AppCompatActivity implements BottomSheetLis
     @BindView(R.id.tvTitle)
     TextView tvTitle;
 
-    private Boolean isLongClickPressed = false;
+    private Boolean onLongClickPressed = false;
     private List<ResolveInfo> resolveInfoList;
     private IGalleryPresenter iGalleryPresenter;
 
@@ -72,7 +72,7 @@ public class GalleryActivity extends AppCompatActivity implements BottomSheetLis
 
     @Override
     public void onBackPressed() {
-        if (isLongClickPressed) {
+        if (onLongClickPressed) {
             GalleryFragment galleryFragment = (GalleryFragment) getFragment(GalleryFragment.class);
             if (galleryFragment != null) {
                 galleryFragment.unSelectAll();
@@ -215,20 +215,24 @@ public class GalleryActivity extends AppCompatActivity implements BottomSheetLis
     }
 
     @Override
-    public void onClickPressed(int itemsSelected) {
-        tvItemCount.setText(String.valueOf(itemsSelected));
+    public void onClickPressed(int selectedItems) {
+        if (selectedItems == 0) {
+            tvTitleActionMode.setText(getString(R.string.select_item_title));
+        } else {
+            tvTitleActionMode.setText(String.valueOf(selectedItems));
+        }
     }
 
     @Override
     public void onLongClickPressed(boolean onLongClickPressed) {
-        this.isLongClickPressed = onLongClickPressed;
+        this.onLongClickPressed = onLongClickPressed;
 
         toggleActionMode();
     }
 
     @Override
     public void toggleActionMode() {
-        if (isLongClickPressed) {
+        if (onLongClickPressed) {
             showActionMode();
         } else {
             hideActionMode();
@@ -255,6 +259,6 @@ public class GalleryActivity extends AppCompatActivity implements BottomSheetLis
 
     @OnClick(R.id.btnBackActionMode)
     public void onClick() {
-        hideActionMode();
+        onBackPressed();
     }
 }
